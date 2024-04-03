@@ -27,11 +27,33 @@ export class Category {
     this.createdAt = props.createdAt ?? new Date();
   }
 
-  static create(props: CategoryConstructorProps): Category {
+  static create(props: CategoryCreateCommand): Category {
     return new Category(props);
   }
 
-  update(props: Partial<CategoryConstructorProps>): Category {
-    return new Category({ ...this, ...props });
+  changeName(name: string): void {
+    this.name = name;
+  }
+
+  changeDescription(description: string): void {
+    this.description = description;
+  }
+
+  activate(): void {
+    this.isActive = true;
+  }
+
+  deactivate(): void {
+    this.isActive = false;
+  }
+
+  toJSON() {
+    return {
+      categoryId: this.categoryId,
+      name: this.name,
+      description: this.description,
+      isActive: this.isActive,
+      createdAt: this.createdAt,
+    };
   }
 }
