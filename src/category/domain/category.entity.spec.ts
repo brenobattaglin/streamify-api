@@ -1,4 +1,5 @@
-import { Category } from "../category.entity";
+import { Uuid } from "../../shared/domain/value-objects/uuid.vo";
+import { Category } from "./category.entity";
 
 describe("category unit tests", () => {
   describe("when constructor is called", () => {
@@ -6,7 +7,7 @@ describe("category unit tests", () => {
       let category = new Category({
         name: "Movie",
       });
-      expect(category.categoryId).toBeUndefined();
+      expect(category.categoryId).toBeInstanceOf(Uuid);
       expect(category.name).toBe("Movie");
       expect(category.description).toBeNull();
       expect(category.isActive).toBe(true);
@@ -21,7 +22,7 @@ describe("category unit tests", () => {
         isActive: false,
         createdAt,
       });
-      expect(category.categoryId).toBeUndefined();
+      expect(category.categoryId).toBeInstanceOf(Uuid);
       expect(category.name).toBe("Movie");
       expect(category.description).toBe("Movie desc");
       expect(category.isActive).toBe(false);
@@ -33,7 +34,7 @@ describe("category unit tests", () => {
       const category = Category.create({
         name: "Movie",
       });
-      expect(category.categoryId).toBeUndefined();
+      expect(category.categoryId).toBeInstanceOf(Uuid);
       expect(category.name).toBe("Movie");
       expect(category.description).toBeNull();
       expect(category.isActive).toBe(true);
@@ -47,7 +48,7 @@ describe("category unit tests", () => {
         description: "Movie desc",
         isActive: false,
       });
-      expect(category.categoryId).toBeUndefined();
+      expect(category.categoryId).toBeInstanceOf(Uuid);
       expect(category.name).toBe("Movie");
       expect(category.description).toBe("Movie desc");
       expect(category.isActive).toBe(false);
@@ -89,6 +90,22 @@ describe("category unit tests", () => {
       });
       category.deactivate();
       expect(category.isActive).toBe(false);
+    });
+  });
+
+  describe("when id is set", () => {
+    const arrange = [
+      { categoryId: null },
+      { categoryId: undefined },
+      { categoryId: Uuid.create() },
+    ];
+
+    test.each(arrange)("id = %j", ({ categoryId }) => {
+      const category = new Category({
+        categoryId: categoryId as any,
+        name: "Movie",
+      });
+      expect(category.categoryId).toBeInstanceOf(Uuid);
     });
   });
 });
