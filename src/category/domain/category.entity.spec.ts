@@ -1,3 +1,4 @@
+import { EntityValidationError } from "../../shared/domain/validators/validation.error";
 import { Uuid } from "../../shared/domain/value-objects/uuid.vo";
 import { Category } from "./category.entity";
 
@@ -125,6 +126,18 @@ describe("category unit tests", () => {
         name: "Movie",
       });
       expect(category.categoryId).toBeInstanceOf(Uuid);
+    });
+  });
+});
+
+describe("category validation tests", () => {
+  describe("when create command is called", () => {
+    test("should throw error for null name", () => {
+      expect(() =>
+        Category.create({ name: null })
+      ).toThrow(
+        new EntityValidationError({ name: "name is required" })
+      );
     });
   });
 });
