@@ -2,6 +2,15 @@ import { Uuid } from "../../shared/domain/value-objects/uuid.vo";
 import { Category } from "./category.entity";
 
 describe("category unit tests", () => {
+  let validateSpy: any;
+  beforeEach(() => {
+    validateSpy = jest.spyOn(Category, "validate");
+  });
+
+  afterEach(() => {
+    validateSpy.mockClear();
+  });
+
   describe("when constructor is called", () => {
     it("should return new category without description", () => {
       let category = new Category({
@@ -12,6 +21,7 @@ describe("category unit tests", () => {
       expect(category.description).toBeNull();
       expect(category.isActive).toBe(true);
       expect(category.createdAt).toBeInstanceOf(Date);
+
     });
 
     it("should return new category with description", () => {
@@ -27,6 +37,7 @@ describe("category unit tests", () => {
       expect(category.description).toBe("Movie desc");
       expect(category.isActive).toBe(false);
       expect(category.createdAt).toBe(createdAt);
+
     });
   });
   describe("when category is created", () => {
@@ -39,6 +50,7 @@ describe("category unit tests", () => {
       expect(category.description).toBeNull();
       expect(category.isActive).toBe(true);
       expect(category.createdAt).toBeInstanceOf(Date);
+      expect(validateSpy).toHaveBeenCalledTimes(1);
     });
 
     it("should create category with description", () => {
@@ -53,6 +65,8 @@ describe("category unit tests", () => {
       expect(category.description).toBe("Movie desc");
       expect(category.isActive).toBe(false);
       expect(category.createdAt).toBeInstanceOf(Date);
+      expect(validateSpy).toHaveBeenCalledTimes(1);
+
     });
   });
 
@@ -63,6 +77,7 @@ describe("category unit tests", () => {
       });
       category.changeName("Music");
       expect(category.name).toBe("Music");
+      expect(validateSpy).toHaveBeenCalledTimes(2);
     });
 
     it("should change description", () => {
@@ -72,6 +87,8 @@ describe("category unit tests", () => {
       });
       category.changeDescription("Music desc");
       expect(category.description).toBe("Music desc");
+      expect(validateSpy).toHaveBeenCalledTimes(2);
+
     });
 
     it("should activate category", () => {
@@ -81,6 +98,7 @@ describe("category unit tests", () => {
       });
       category.activate();
       expect(category.isActive).toBe(true);
+      expect(validateSpy).toHaveBeenCalledTimes(1);
     });
 
     it("should deactivate category", () => {
@@ -90,6 +108,7 @@ describe("category unit tests", () => {
       });
       category.deactivate();
       expect(category.isActive).toBe(false);
+      expect(validateSpy).toHaveBeenCalledTimes(1);
     });
   });
 
