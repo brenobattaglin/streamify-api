@@ -1,4 +1,3 @@
-import { EntityValidationError } from "../../shared/domain/validators/validation.error";
 import { Uuid } from "../../shared/domain/value-objects/uuid.vo";
 import { Category } from "./category.entity";
 
@@ -132,12 +131,109 @@ describe("category unit tests", () => {
 
 describe("category validation tests", () => {
   describe("when create command is called", () => {
-    test("should throw error for null name", () => {
-      expect(() =>
-        Category.create({ name: null })
-      ).toThrow(
-        new EntityValidationError({ name: "name is required" })
-      );
+    it("should return invalid name property", () => {
+      expect(() => Category.create({ name: null })).containsErrorMessages({
+        name: [
+          "name should not be empty",
+          "name must be a string",
+          "name must be shorter than or equal to 255 characters"
+        ],
+      });
+
+      expect(() => Category.create({ name: "" })).containsErrorMessages({
+        name: [
+          "name should not be empty",
+        ],
+      });
+
+      expect(() => Category.create({ name: 5 as any })).containsErrorMessages({
+        name: [
+          "name must be a string",
+          "name must be shorter than or equal to 255 characters"
+        ],
+      });
+
+      expect(() => Category.create({ name: "a".repeat(256) })).containsErrorMessages({
+        name: [
+          "name must be shorter than or equal to 255 characters"
+        ],
+      });
+    });
+
+    it("should return invalid description property", () => {
+      expect(() => Category.create({ name: "Movie", description: 5 as any })).containsErrorMessages({
+        description: [
+          "description must be a string",
+        ],
+      });
+
+      expect(() => Category.create({ name: "Movie", description: "a".repeat(256) })).containsErrorMessages({
+        description: [
+          "description must be shorter than or equal to 255 characters"
+        ],
+      });
+    });
+
+
+    it("should return invalid isActive property", () => {
+      expect(() => Category.create({ name: "Movie", description: 'lorem ipsum', isActive: "true" as any })).containsErrorMessages({
+        isActive: [
+          "isActive must be a boolean value",
+        ],
+      });
+    });
+
+    it("should return invalid name change", () => {
+      const category = Category.create({ name: "Movie" });
+      expect(() => category.changeName(null)).containsErrorMessages({
+        name: [
+          "name should not be empty",
+          "name must be a string",
+          "name must be shorter than or equal to 255 characters"
+        ],
+      });
+
+      expect(() => category.changeName("")).containsErrorMessages({
+        name: [
+          "name should not be empty",
+        ],
+      });
+
+      expect(() => category.changeName(5 as any)).containsErrorMessages({
+        name: [
+          "name must be a string",
+          "name must be shorter than or equal to 255 characters"
+        ],
+      });
+
+      expect(() => category.changeName("a".repeat(256))).containsErrorMessages({
+        name: [
+          "name must be shorter than or equal to 255 characters"
+        ],
+      });
+    });
+
+    it("should return invalid description change", () => {
+      const category = Category.create({ name: "Movie", description: "Movie desc" });
+      expect(() => category.changeDescription(5 as any)).containsErrorMessages({
+        description: [
+          "description must be a string",
+        ],
+      });
+
+      expect(() => category.changeDescription("a".repeat(256))).containsErrorMessages({
+        description: [
+          "description must be shorter than or equal to 255 characters"
+        ],
+      });
+    });
+
+    it("should return invalid createdAt property", () => {
+      expect(() => new Category({ name: "Movie", createdAt: "2021-01-01" as any })).containsErrorMessages({
+        createdAt: [
+          "createdAt must be a Date instance",
+        ],
+      });
     });
   });
 });
