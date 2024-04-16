@@ -1,4 +1,5 @@
 import { Entity } from '../../domain/entity';
+import { NotFoundError } from '../../domain/errors/not-found.erros';
 import { IRepository } from '../../domain/repository/repository-interface';
 import { ValueObject } from '../../domain/value-object';
 
@@ -21,7 +22,7 @@ export abstract class InMemoryRepository<
       item.entityId.equals(entity.entityId),
     );
     if (indexFound === -1) {
-      throw new Error('Entity not found');
+      throw new NotFoundError(entity.entityId, this.getEntityId());
     }
 
     this.items[indexFound] = entity;
